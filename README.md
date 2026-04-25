@@ -98,7 +98,7 @@ Contrastive learning alone is the critical component.
 ```bibtex
 @misc{bioscreen2026,
   title={BioScreen: Function-Aware DNA Synthesis Screening},
-  author={AIxBio Hackathon Team},
+  author={Subramanyam Sahoo},
   year={2026},
   note={AIxBio Hackathon, Track 1}
 }

@@ -4,7 +4,7 @@ setup(
     name="bioscreen",
     version="1.0.0",
     description="Function-aware DNA synthesis screening against AI-designed biological threats",
-    author="AIxBio Hackathon Team",
+    author="Subramanyam Sahoo",
     packages=find_packages(),
     python_requires=">=3.10",
     install_requires=[

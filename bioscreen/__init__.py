@@ -7,7 +7,7 @@ supervised contrastive learning for mechanism-of-harm detection.
 """
 
 __version__ = "1.0.0"
-__author__ = "AIxBio Hackathon Team"
+__author__ = "Subramanyam Sahoo"
 
 from bioscreen.screening.screener import BioScreener
 from bioscreen.screening.result import ScreeningResult

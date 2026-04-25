@@ -143,5 +143,5 @@ async def model_info():
         "auroc": 0.998,
         "detection_at_40pct_identity": 0.993,
         "mechanism_accuracy": 0.908,
-        "citation": "AIxBio Hackathon 2026, Track 1: DNA Screening & Synthesis Controls",
+        "citation": "Sahoo, S. (2026). BioScreen: Function-Aware DNA Synthesis Screening. AIxBio Hackathon, Track 1.",
     }
