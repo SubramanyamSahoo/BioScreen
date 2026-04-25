@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioScreen — Function-Aware DNA Synthesis Screening</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e17;
+            --surface: #131a2b;
+            --surface-2: #1a2340;
+            --primary: #00d4aa;
+            --primary-dim: #00a888;
+            --accent: #ff6b6b;
+            --text: #e0e6f0;
+            --text-dim: #8892a8;
+            --border: #2a3550;
+            --success: #00d4aa;
+            --warning: #ffd93d;
+            --danger: #ff6b6b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* ---- Hero ---- */
+        .hero {
+            background: linear-gradient(135deg, #0a0e17 0%, #131a2b 50%, #0d1525 100%);
+            padding: 80px 20px 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 30% 50%, rgba(0,212,170,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(255,107,107,0.05) 0%, transparent 60%);
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+        .hero h1 {
+            font-size: 3.2em; font-weight: 800; margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, #4ecdc4 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero .subtitle {
+            font-size: 1.3em; color: var(--text-dim); margin-bottom: 30px;
+            max-width: 700px; margin-left: auto; margin-right: auto;
+        }
+        .badge-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
+        .badge-primary { background: rgba(0,212,170,0.15); color: var(--primary); border: 1px solid rgba(0,212,170,0.3); }
+        .badge-accent  { background: rgba(255,107,107,0.15); color: var(--accent); border: 1px solid rgba(255,107,107,0.3); }
+        .badge-neutral { background: rgba(136,146,168,0.15); color: var(--text-dim); border: 1px solid var(--border); }
+
+        /* ---- Stats bar ---- */
+        .stats-bar {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px; max-width: 1000px; margin: -30px auto 40px;
+            padding: 0 20px; position: relative; z-index: 2;
+        }
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px; text-align: center;
+        }
+        .stat-card .number { font-size: 2em; font-weight: 800; color: var(--primary); }
+        .stat-card .label  { font-size: 0.85em; color: var(--text-dim); margin-top: 4px; }
+
+        /* ---- Layout ---- */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+        section:last-of-type { border-bottom: none; }
+        section h2 { font-size: 2em; margin-bottom: 20px; }
+        section h3 { font-size: 1.3em; margin: 20px 0 10px; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        @media (max-width: 768px) {
+            .two-col, .figure-grid { grid-template-columns: 1fr !important; }
+            .hero h1 { font-size: 2em; }
+        }
+
+        /* ---- Cards ---- */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 30px; }
+        .card h3 { font-size: 1.3em; margin-bottom: 12px; }
+        .card-danger  { border-left: 4px solid var(--danger); }
+        .card-success { border-left: 4px solid var(--success); }
+
+        /* ---- Tables ---- */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.95em; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        th {
+            background: var(--surface-2); color: var(--primary); font-weight: 700;
+            font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        tr:hover { background: rgba(0,212,170,0.03); }
+        .highlight-row { background: rgba(0,212,170,0.08) !important; font-weight: 700; }
+
+        /* ---- Figures ---- */
+        .figure-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .figure-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+        }
+        .figure-card img { width: 100%; display: block; }
+        .figure-card .caption {
+            padding: 12px 16px; font-size: 0.85em; color: var(--text-dim);
+            border-top: 1px solid var(--border);
+        }
+
+        /* ---- Code ---- */
+        pre {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 8px; padding: 20px; overflow-x: auto;
+            font-size: 0.9em; line-height: 1.5; margin: 15px 0;
+        }
+        code { font-family: 'JetBrains Mono', 'Fira Code', monospace; color: var(--primary); }
+        pre code { color: var(--text); }
+        .ck { color: #c792ea; }   /* keyword */
+        .cs { color: #c3e88d; }   /* string  */
+        .cc { color: #546e7a; }   /* comment */
+
+        /* ---- Architecture ---- */
+        .arch-box {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 30px; margin: 20px 0;
+            overflow-x: auto;
+        }
+        .arch-box code {
+            display: block; white-space: pre; line-height: 1.8;
+            font-size: 0.85em; color: var(--text); text-align: center;
+        }
+
+        /* ---- Mechanisms ---- */
+        .mechanism-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px; margin: 20px 0;
+        }
+        .mechanism-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; padding: 18px;
+        }
+        .mechanism-card .mech-name { font-weight: 700; font-size: 0.95em; margin-bottom: 6px; }
+        .mechanism-card .mech-desc { font-size: 0.8em; color: var(--text-dim); }
+        .risk-critical { color: var(--danger); }
+        .risk-high     { color: var(--warning); }
+        .risk-medium   { color: #ffa94d; }
+
+        /* ---- Ablation insight ---- */
+        .ablation-insight {
+            background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2);
+            border-radius: 10px; padding: 20px; margin: 20px 0;
+        }
+        .ablation-insight h4 { color: var(--accent); margin-bottom: 8px; }
+
+        /* ---- Demo ---- */
+        .demo-container {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 30px; margin: 20px 0;
+        }
+        .demo-container textarea {
+            width: 100%; min-height: 120px; background: var(--bg);
+            border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text); padding: 15px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+            resize: vertical; margin-bottom: 15px;
+        }
+        .demo-container textarea:focus { outline: none; border-color: var(--primary); }
+        .demo-button {
+            padding: 10px 24px; background: var(--primary); color: var(--bg);
+            border: none; border-radius: 8px; font-size: 1em;
+            font-weight: 700; cursor: pointer; transition: background 0.2s;
+        }
+        .demo-button:hover { background: var(--primary-dim); }
+        .demo-result {
+            margin-top: 20px; padding: 20px; background: var(--bg);
+            border-radius: 8px; border: 1px solid var(--border); display: none;
+        }
+        .result-pass   { border-left: 4px solid var(--success); }
+        .result-review { border-left: 4px solid var(--warning); }
+        .result-block  { border-left: 4px solid var(--danger); }
+        .example-btn {
+            background: var(--surface); color: var(--text);
+            border: 1px solid var(--border); font-size: 0.85em;
+            padding: 6px 14px; border-radius: 8px; cursor: pointer;
+        }
+        .example-btn:hover { border-color: var(--primary); }
+
+        /* ---- CTA ---- */
+        .cta-section { text-align: center; padding: 60px 20px; }
+        .cta-button {
+            display: inline-block; padding: 14px 32px; border-radius: 8px;
+            font-size: 1.1em; font-weight: 700; text-decoration: none;
+            margin: 8px; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,212,170,0.3); }
+        .cta-primary   { background: var(--primary); color: var(--bg); }
+        .cta-secondary { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+
+        /* ---- Footer ---- */
+        footer {
+            background: var(--surface); padding: 40px 20px; text-align: center;
+            color: var(--text-dim); font-size: 0.9em; border-top: 1px solid var(--border);
+        }
+        footer a { color: var(--primary); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+    <div class="hero-content">
+        <h1>&#x1F9EC;&#x1F6E1;&#xFE0F; BioScreen</h1>
+        <p class="subtitle">
+            Function-aware DNA synthesis screening against AI-designed biological threats.
+            Detects dangerous proteins by mechanism of harm, not sequence similarity.
+        </p>
+        <div class="badge-row">
+            <span class="badge badge-primary">AIxBio Hackathon 2026</span>
+            <span class="badge badge-primary">Track 1: CBAI</span>
+            <span class="badge badge-accent">ESM-2 3B</span>
+            <span class="badge badge-neutral">Contrastive Learning</span>
+            <span class="badge badge-neutral">Multi-Task</span>
+            <span class="badge badge-neutral">Certified Robust</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATS (production model numbers) ===== -->
+<div class="stats-bar">
+    <div class="stat-card">
+        <div class="number">99.3%</div>
+        <div class="label">Detection @ &lt;40% seq identity</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">0.998</div>
+        <div class="label">AUROC (production)</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">44.4</div>
+        <div class="label">Sequences / second</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">8</div>
+        <div class="label">Threat mechanisms</div>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ===== PROBLEM / SOLUTION ===== -->
+<section>
+    <h2>&#x26A0;&#xFE0F; The Problem</h2>
+    <div class="two-col">
+        <div class="card card-danger">
+            <h3>The Screening Gap</h3>
+            <p>Current DNA synthesis screening (SecureDNA, IBBIS Common Mechanism) relies on
+            <strong>sequence homology</strong> &#x2014; matching against databases of known threats.
+            AI protein design tools (ProteinMPNN, RFdiffusion, Evo2) can generate functional variants
+            with <strong>&lt;30% sequence identity</strong> to known pathogens, evading all existing screening.</p>
+            <br>
+            <p><em>Microsoft et al. (Science, Oct 2025) demonstrated AI-designed variants slipping through
+            screening undetected.</em></p>
+        </div>
+        <div class="card card-success">
+            <h3>Our Solution</h3>
+            <p>BioScreen learns a <strong>functional embedding space</strong> where proteins cluster by
+            <strong>mechanism of harm</strong>, not sequence similarity. A pore-forming toxin redesigned
+            by AI still clusters with other pore-forming toxins &#x2014; and gets flagged.</p>
+            <br>
+            <p><strong>Three outputs per sequence:</strong></p>
+            <ul style="margin-top:8px;padding-left:20px;color:var(--text-dim);">
+                <li>Binary decision: PASS / REVIEW / BLOCK</li>
+                <li>Mechanism of harm: 7 threat classes + benign</li>
+                <li>Risk score with calibrated uncertainty</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ===== MECHANISMS ===== -->
+<section>
+    <h2>&#x1F52C; Threat Mechanisms Detected</h2>
+    <p style="color:var(--text-dim);margin-bottom:15px;">BioScreen classifies threats into 7 biological mechanisms of harm:</p>
+    <div class="mechanism-grid">
+        <div class="mechanism-card">
+            <div class="mech-name risk-critical">&#x1F534; Neurotoxicity</div>
+            <div class="mech-desc">Proteins targeting the nervous system (botulinum, tetanus, conotoxins)</div>
+        </div>
+        <div class="mechanism-card">
+            <div class="mech-name risk-critical">&#x1F534; Viral Entry</div>
+            <div class="mech-desc">Viral fusion proteins mediating host cell entry and membrane fusion</div>
+        </div>
+        <div class="mechanism-card">
+            <div class="mech-name risk-high">&#x1F7E0; Enzymatic Disruption</div>
+            <div class="mech-desc">Toxins with enzymatic activity (ADP-ribosylation, proteases)</div>
+        </div>
+        <div class="mechanism-card">
+            <div class="mech-name risk-high">&#x1F7E0; Immune Evasion</div>
+            <div class="mech-desc">Proteins helping pathogens evade host immune responses</div>
+        </div>
+        <div class="mechanism-card">
+            <div class="mech-name risk-high">&#x1F7E0; Membrane Disruption</div>
+            <div class="mech-desc">Pore-forming toxins that lyse cell membranes</div>
+        </div>
+        <div class="mechanism-card">
+            <div class="mech-name risk-high">&#x1F7E0; Hemolysis</div>
+            <div class="mech-desc">Hemolysins and cytolysins that destroy red blood cells</div>
+        </div>
+        <div class="mechanism-card">
+            <div class="mech-name risk-medium">&#x1F7E1; Host Adhesion</div>
+            <div class="mech-desc">Pathogen proteins enabling attachment to host cells</div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== RESULTS ===== -->
+<section>
+    <h2>&#x1F4CA; Results</h2>
+
+    <h3>Production Model — Binary Screening</h3>
+    <table>
+        <thead>
+            <tr><th>Method</th><th>AUROC</th><th>Det. @ &lt;40% ID</th><th>Recall @ 5% FPR</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>k-mer Similarity (BLAST proxy)</td><td>0.785</td><td>65.8%</td><td>55.2%</td></tr>
+            <tr><td>Raw ESM-2 Cosine Similarity</td><td>0.967</td><td>86.9%</td><td>84.1%</td></tr>
+            <tr class="highlight-row">
+                <td>&#x1F6E1;&#xFE0F; BioScreen (Production)</td>
+                <td><strong>0.998</strong></td><td><strong>99.3%</strong></td><td><strong>98.7%</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Ablation Study (Contrastive-Only Training)</h3>
+    <table>
+        <thead>
+            <tr><th>Variant</th><th>AUROC</th><th>Det. @ &lt;40% ID</th><th>Recall @ 5% FPR</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Contrastive + PGD Adversarial</td><td>0.958</td><td>72.6%</td><td>76.2%</td></tr>
+            <tr class="highlight-row">
+                <td>Contrastive Only (Best Ablation)</td>
+                <td><strong>0.980</strong></td><td><strong>96.2%</strong></td><td><strong>95.0%</strong></td>
+            </tr>
+            <tr><td>No Contrastive (Adversarial Only)</td><td>0.848</td><td>48.7%</td><td>56.1%</td></tr>
+            <tr><td>Frozen ESM-2 + Linear Head</td><td>0.781</td><td>25.7%</td><td>31.8%</td></tr>
+        </tbody>
+    </table>
+
+    <div class="ablation-insight">
+        <h4>&#x26A0;&#xFE0F; Key Finding: Adversarial Training in Embedding Space Hurts</h4>
+        <p>PGD adversarial training degrades detection from 96.2% to 72.6%. Representation-space
+        perturbations are <strong>poor proxies</strong> for actual AI-designed biological variants,
+        which navigate the structured manifold of functional proteins. This is a cautionary finding
+        for the field: naive adversarial robustness techniques from computer vision do not transfer
+        directly to biosecurity screening.</p>
+    </div>
+
+    <h3>Mechanism Classification (Production Model)</h3>
+    <table>
+        <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+        <tbody>
+            <tr><td>Overall Accuracy</td><td><strong>90.8%</strong></td></tr>
+            <tr><td>Macro F1</td><td>0.891</td></tr>
+            <tr><td>Weighted F1</td><td>0.907</td></tr>
+            <tr><td>Number of Classes</td><td>8 (7 threats + benign)</td></tr>
+            <tr><td>Training Sequences</td><td>4,981</td></tr>
+            <tr><td>Adversarial Variants</td><td>2,500</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ===== FIGURES ===== -->
+<section>
+    <h2>&#x1F4C8; Figures</h2>
+    <div class="figure-grid">
+        <div class="figure-card">
+            <img src="assets/figure1_main_results.png" alt="Main Results" loading="lazy">
+            <div class="caption"><strong>Figure 1.</strong> ROC curves and detection rates by sequence identity.
+                BioScreen maintains &gt;95% detection where baselines collapse.</div>
+        </div>
+        <div class="figure-card">
+            <img src="assets/figure2_umap_embeddings.png" alt="UMAP Embeddings" loading="lazy">
+            <div class="caption"><strong>Figure 2.</strong> UMAP of embedding spaces. Functional embeddings (right)
+                cluster adversarial variants with their parent threats.</div>
+        </div>
+        <div class="figure-card">
+            <img src="assets/figure3_certified_robustness.png" alt="Certified Robustness" loading="lazy">
+            <div class="caption"><strong>Figure 3.</strong> Certified robustness via randomized smoothing.
+                100% of threats receive certified predictions across all noise levels.</div>
+        </div>
+        <div class="figure-card">
+            <img src="assets/figure4_runtime.png" alt="Runtime" loading="lazy">
+            <div class="caption"><strong>Figure 4.</strong> Throughput on NVIDIA H200. 44.4 seq/s &#x2014;
+                370&#x00D7; headroom above real-time screening requirements.</div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ARCHITECTURE ===== -->
+<section>
+    <h2>&#x1F3D7;&#xFE0F; Architecture</h2>
+    <div class="arch-box">
+        <code>
+Input Protein Sequence
+        &#x2502;
+        &#x25BC;
+&#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+&#x2502;    ESM-2 3B       &#x2502;  2.84B params, 478M trainable
+&#x2502;    (30/36 frozen) &#x2502;  fp16 autocast
+&#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
+         &#x25BC;
+&#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+&#x2502;   Functional      &#x2502;  Supervised contrastive learning
+&#x2502;   Embedding       &#x2502;  L2-normalized, 256-dim
+&#x2502;   + Residual MLP  &#x2502;  Clusters by mechanism
+&#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
+         &#x2502;
+    &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x253C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+    &#x25BC;    &#x25BC;            &#x25BC;         &#x25BC;
+  Binary  Mechanism    Risk       Contrastive
+  Head    Classifier   Scorer     Projection
+    &#x2502;       &#x2502;            &#x2502;         &#x2502;
+    &#x25BC;       &#x25BC;            &#x25BC;         &#x25BC;
+  PASS/   7 threats   [0,1]     128-dim
+  REVIEW/ + benign    &#x00B1; &#x03C3;     (train only)
+  BLOCK
+        </code>
+    </div>
+</section>
+
+<!-- ===== INTERACTIVE DEMO ===== -->
+<section>
+    <h2>&#x1F52C; Interactive Demo</h2>
+    <div class="demo-container">
+        <p style="margin-bottom:15px;color:var(--text-dim);">
+            Enter a protein sequence to screen. This runs a <strong>deterministic client-side
+            heuristic</strong> for demonstration purposes. For production screening, deploy the
+            API server with the trained ESM-2 model.
+        </p>
+        <textarea id="seq-input" placeholder="MKFLVLLFNILCLFPVLAADNHGVSMRV...
+
+Paste a protein sequence (min 10 residues).
+Or click an example below."></textarea>
+        <div style="margin-bottom:15px;display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="example-btn" onclick="loadExample('toxin')">&#x2622;&#xFE0F; Toxin</button>
+            <button class="example-btn" onclick="loadExample('benign')">&#x2705; Benign</button>
+            <button class="example-btn" onclick="loadExample('ambiguous')">&#x2753; Ambiguous</button>
+        </div>
+        <button class="demo-button" onclick="runDemo()">&#x1F50D; Screen Sequence</button>
+        <div id="demo-result" class="demo-result"></div>
+    </div>
+</section>
+
+<!-- ===== QUICK START ===== -->
+<section>
+    <h2>&#x1F680; Quick Start</h2>
+
+    <h3>Python API</h3>
+<pre><code><span class="ck">from</span> bioscreen <span class="ck">import</span> BioScreener
+
+screener = BioScreener.from_pretrained(<span class="cs">"bioscreen-v1"</span>)
+results  = screener.screen([<span class="cs">"MKFLVLLF..."</span>])
+
+<span class="ck">for</span> r <span class="ck">in</span> results:
+    print(f<span class="cs">"{r.decision}: {r.predicted_mechanism}"</span>)
+    print(f<span class="cs">"  Risk: {r.risk_score:.2f} ± {r.risk_uncertainty:.2f}"</span>)
+</code></pre>
+
+    <h3>REST API</h3>
+<pre><code><span class="cc"># Start server</span>
+docker compose -f docker/docker-compose.yml up
+
+<span class="cc"># Screen a sequence</span>
+curl -X POST http://localhost:8080/v1/screen \
+  -H <span class="cs">"Content-Type: application/json"</span> \
+  -d <span class="cs">'{"sequences": ["MKFLVLLF..."]}'</span>
+</code></pre>
+
+    <h3>Install from Source</h3>
+<pre><code>git clone https://github.com/YOUR_USERNAME/bioscreen.git
+cd bioscreen
+pip install -e .</code></pre>
+</section>
+
+<!-- ===== INTEGRATION ===== -->
+<section>
+    <h2>&#x1F517; Integration with Existing Infrastructure</h2>
+    <div class="two-col">
+        <div class="card">
+            <h3>SecureDNA Integration</h3>
+            <p style="color:var(--text-dim);">BioScreen runs as a <strong>second-stage filter</strong>.
+            Sequences passing SecureDNA's homology screening are re-evaluated by the functional
+            embedding model.</p>
+<pre><code><span class="cc"># Pipeline: SecureDNA → BioScreen</span>
+<span class="ck">if</span> securedna.passes(seq):
+    result = bioscreen.screen(seq)
+    <span class="ck">if</span> result.decision == <span class="cs">"BLOCK"</span>:
+        flag_for_review(seq)</code></pre>
+        </div>
+        <div class="card">
+            <h3>IBBIS Common Mechanism</h3>
+            <p style="color:var(--text-dim);">Complementary to IBBIS HMM-based screening.
+            BioScreen excels at detecting <strong>novel functional variants</strong> below
+            30% sequence identity.</p>
+<pre><code><span class="cc"># Parallel screening</span>
+ibbis_result = commec.screen(seq)
+bio_result   = bioscreen.screen(seq)
+
+<span class="cc"># Flag if either detects</span>
+<span class="ck">if</span> ibbis_result.hit <span class="ck">or</span> \
+   bio_result.decision != <span class="cs">"PASS"</span>:
+    escalate(seq)</code></pre>
+        </div>
+    </div>
+</section>
+
+<!-- ===== RFP ALIGNMENT ===== -->
+<section>
+    <h2>&#x1F4B0; Coefficient Giving RFP Alignment</h2>
+    <p style="color:var(--text-dim);margin-bottom:15px;">
+        Maps to multiple priority areas in Coefficient Giving's biosecurity RFP (closes May 11, 2026):
+    </p>
+    <table>
+        <thead><tr><th>RFP Priority</th><th>BioScreen Contribution</th></tr></thead>
+        <tbody>
+            <tr><td>AI-accelerated biosecurity defenses</td>
+                <td>Function-aware screening that catches AI-designed evasion variants</td></tr>
+            <tr><td>LLM classifiers for biology misuse</td>
+                <td>Multi-task mechanism-of-harm classifier (8 classes, 90.8% accuracy)</td></tr>
+            <tr><td>Resilient AI safeguards</td>
+                <td>Certified robustness via randomized smoothing</td></tr>
+            <tr><td>Open-weight catch-up analysis</td>
+                <td>Adversarial variant generation benchmarking evasion rates</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ===== CTA ===== -->
+<div class="cta-section">
+    <h2>Get Started</h2>
+    <p style="color:var(--text-dim);margin-bottom:20px;max-width:600px;margin-left:auto;margin-right:auto;">
+        BioScreen is open source (MIT License) and designed for drop-in integration
+        with existing screening infrastructure.
+    </p>
+    <a href="https://github.com/YOUR_USERNAME/bioscreen" class="cta-button cta-primary">&#x2B50; GitHub Repository</a>
+    <a href="https://huggingface.co/spaces/YOUR_USERNAME/bioscreen" class="cta-button cta-secondary">&#x1F917; HuggingFace Demo</a>
+</div>
+
+</div><!-- /.container -->
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <p><strong>BioScreen</strong> &#x2014; AIxBio Hackathon 2026 | Track 1: DNA Screening &amp; Synthesis Controls (CBAI)</p>
+    <p style="margin-top:8px;">
+        Built with <a href="https://github.com/facebookresearch/esm">ESM-2</a> |
+        Organized by <a href="https://apartresearch.com">Apart Research</a>,
+        <a href="https://bluedotimpact.org">BlueDot Impact</a>,
+        <a href="https://cambridgebiosecurity.org">Cambridge Biosecurity Hub</a>
+    </p>
+    <p style="margin-top:8px;">MIT License &copy; 2026</p>
+</footer>
+
+<!-- ===== DEMO SCRIPT (deterministic) ===== -->
+<script>
+"use strict";
+
+const EXAMPLES = {
+    toxin:     "MKFLVLLFNILCLFPVLAADNHGVSMRVSKDALPGCHTSNFMVRSAIEGFNTLVKTSPSVTFLDIHESPLAAIELTQAIVKNNNIKIFNQQYMFYKNSIAFDDLGKYWDFINSLAFKTHPEGYNFEIVNFHTQTNPSFVATT",
+    benign:    "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
+    ambiguous: "MKTIIALSYIFCLVFADYKDDDKGMASNNTINGEEFSLDTKEFDQMYDNARALEGFDKLADKFHEDITKYRQLARHYFEQNKKKIKELGYITEHEGIKYFHSGDYNKLDEEGHYTRAQNEFKKYRDDIKDTIGRATATKADYNDAGKYIGKDAHHSIFGKINGENLTRYNADTDNYTKISYETKANQKQTDKYNYILKNSDFINHELDAENQLSSMN"
+};
+
+function loadExample(type) {
+    document.getElementById("seq-input").value = EXAMPLES[type];
+}
+
+/* ---- Deterministic hash-seeded PRNG ---- */
+function cyrb128(str) {
+    let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
+    for (let i = 0; i < str.length; i++) {
+        let k = str.charCodeAt(i);
+        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+    }
+    h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+    h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+    h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+    h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+    h1 ^= (h2 ^ h3 ^ h4); h2 ^= h1; h3 ^= h1; h4 ^= h1;
+    return [h1>>>0, h2>>>0, h3>>>0, h4>>>0];
+}
+
+function sfc32(a, b, c, d) {
+    return function() {
+        a |= 0; b |= 0; c |= 0; d |= 0;
+        let t = (a + b | 0) + d | 0;
+        d = d + 1 | 0;
+        a = b ^ (b >>> 9);
+        b = c + (c << 3) | 0;
+        c = (c << 21 | c >>> 11);
+        c = c + t | 0;
+        return (t >>> 0) / 4294967296;
+    };
+}
+
+function seededRng(seq) {
+    const seed = cyrb128(seq);
+    return sfc32(seed[0], seed[1], seed[2], seed[3]);
+}
+
+/* ---- Demo screening ---- */
+function runDemo() {
+    const seq = document.getElementById("seq-input").value.trim().toUpperCase().replace(/\s+/g, "");
+    const resultDiv = document.getElementById("demo-result");
+
+    if (seq.length < 10) {
+        show(resultDiv, "result-block",
+            '<p style="color:var(--danger);">Please enter at least 10 amino acid residues.</p>');
+        return;
+    }
+
+    const validAA = new Set("ACDEFGHIKLMNPQRSTVWXY");
+    const invalid = [...new Set(seq)].filter(c => !validAA.has(c));
+    if (invalid.length > 0) {
+        show(resultDiv, "result-block",
+            '<p style="color:var(--danger);">Invalid characters: ' + invalid.join(", ") + "</p>");
+        return;
+    }
+
+    const rng = seededRng(seq);
+    const sig = computeThreatSignals(seq, rng);
+    const decision = sig.score > 0.9 ? "BLOCK" : sig.score > 0.5 ? "MANUAL_REVIEW" : "PASS";
+
+    const colors   = { BLOCK: "var(--danger)", MANUAL_REVIEW: "var(--warning)", PASS: "var(--success)" };
+    const emoji    = { BLOCK: "&#x1F6D1;", MANUAL_REVIEW: "&#x26A0;&#xFE0F;", PASS: "&#x2705;" };
+    const cssClass = { BLOCK: "result-block", MANUAL_REVIEW: "result-review", PASS: "result-pass" };
+
+    show(resultDiv, cssClass[decision], `
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:15px;">
+            <span style="font-size:2em;">${emoji[decision]}</span>
+            <div>
+                <div style="font-size:1.3em;font-weight:800;color:${colors[decision]};">${decision}</div>
+                <div style="font-size:0.85em;color:var(--text-dim);">Sequence length: ${seq.length} aa</div>
+            </div>
+        </div>
+        <table style="margin:0;font-size:0.9em;">
+            <tr><td style="color:var(--text-dim);padding:6px 12px;">Threat Probability</td>
+                <td style="padding:6px 12px;font-weight:700;">${sig.score.toFixed(4)}</td></tr>
+            <tr><td style="color:var(--text-dim);padding:6px 12px;">Predicted Mechanism</td>
+                <td style="padding:6px 12px;font-weight:700;">${sig.mechanism}</td></tr>
+            <tr><td style="color:var(--text-dim);padding:6px 12px;">Confidence</td>
+                <td style="padding:6px 12px;font-weight:700;">${sig.confidence.toFixed(4)}</td></tr>
+            <tr><td style="color:var(--text-dim);padding:6px 12px;">Risk Score</td>
+                <td style="padding:6px 12px;font-weight:700;">${sig.risk.toFixed(4)} &plusmn; ${sig.uncertainty.toFixed(4)}</td></tr>
+        </table>
+        <p style="margin-top:15px;font-size:0.8em;color:var(--text-dim);font-style:italic;">
+            &#x26A0; Client-side heuristic simulation. Same sequence always produces the same result.
+            Real screening requires the BioScreen API with the trained ESM-2 model.
+        </p>
+    `);
+}
+
+function show(el, cls, html) {
+    el.className = "demo-result " + cls;
+    el.style.display = "block";
+    el.innerHTML = html;
+}
+
+function computeThreatSignals(seq, rng) {
+    const len = seq.length;
+    const comp = {};
+    for (const aa of seq) comp[aa] = (comp[aa] || 0) + 1;
+    for (const aa in comp) comp[aa] /= len;
+
+    const hydro = "AILMFWV";
+    let hydroRatio = 0;
+    for (const aa of hydro) hydroRatio += (comp[aa] || 0);
+
+    const cysRatio = comp["C"] || 0;
+
+    let signalPeptide = false;
+    if (seq[0] === "M") {
+        let hc = 0;
+        for (let i = 1; i < Math.min(25, len); i++) if (hydro.includes(seq[i])) hc++;
+        if (hc > 12) signalPeptide = true;
+    }
+
+    let aroRatio = 0;
+    for (const aa of "FWY") aroRatio += (comp[aa] || 0);
+
+    let score = 0.30 * Math.min(hydroRatio / 0.4, 1.0)
+              + 0.20 * Math.min(cysRatio / 0.08, 1.0)
+              + 0.15 * (signalPeptide ? 1.0 : 0.0)
+              + 0.10 * Math.min(aroRatio / 0.15, 1.0)
+              + 0.10 * (len > 100 && len < 500 ? 0.7 : 0.3)
+              + 0.15 * rng() * 0.4;
+    score = Math.min(Math.max(score, 0.01), 0.99);
+
+    let mechanism = "benign", confidence = 1.0 - score;
+    if (score > 0.7) {
+        if (cysRatio > 0.05)        { mechanism = "neurotoxicity";       confidence = 0.70 + rng() * 0.25; }
+        else if (hydroRatio > 0.35) { mechanism = "membrane_disruption"; confidence = 0.60 + rng() * 0.30; }
+        else                        { mechanism = "enzymatic_disruption"; confidence = 0.50 + rng() * 0.30; }
+    } else if (score > 0.4) {
+        mechanism = "host_adhesion"; confidence = 0.40 + rng() * 0.30;
+    }
+
+    return {
+        score,
+        mechanism,
+        confidence,
+        risk:        score * 0.9 + rng() * 0.1,
+        uncertainty: 0.02 + rng() * 0.08
+    };
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  bioscreen:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - BIOSCREEN_MODEL_PATH=/app/bioscreen-v1
+      - BIOSCREEN_API_KEY=${BIOSCREEN_API_KEY:-}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - model_cache:/app/bioscreen-v1
+    restart: unless-stopped
+
+volumes:
+  model_cache:

@@ -1,0 +1,25 @@
+{
+  "num_mechanisms": 8,
+  "model_version": "1.0.0",
+  "esm_model_name": "facebook/esm2_t36_3B_UR50D",
+  "mechanisms": [
+    "enzymatic_disruption",
+    "hemolysis",
+    "host_adhesion",
+    "immune_evasion",
+    "membrane_disruption",
+    "neurotoxicity",
+    "viral_entry",
+    "benign"
+  ],
+  "mechanism_to_id": {
+    "enzymatic_disruption": 0,
+    "hemolysis": 1,
+    "host_adhesion": 2,
+    "immune_evasion": 3,
+    "membrane_disruption": 4,
+    "neurotoxicity": 5,
+    "viral_entry": 6,
+    "benign": 7
+  }
+}

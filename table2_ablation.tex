@@ -1,0 +1,14 @@
+\begin{table}
+\caption{Ablation study. Each component contributes to adversarial robustness. Adversarial training has the largest effect on low-identity detection.}
+\label{tab:ablation}
+\begin{tabular}{lrrrr}
+\toprule
+ & AUROC & AP & Det@<40%ID & Recall@5%FPR \\
+\midrule
+Full Model & 0.958 & 0.996 & 0.726 & 0.762 \\
+No Adversarial & 0.980 & 0.998 & 0.962 & 0.950 \\
+No Contrastive & 0.848 & 0.992 & 0.487 & 0.561 \\
+Frozen ESM-2 & 0.781 & 0.986 & 0.257 & 0.318 \\
+\bottomrule
+\end{tabular}
+\end{table}

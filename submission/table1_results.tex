@@ -1,0 +1,15 @@
+\begin{table}
+\caption{Screening performance on adversarial threat variants. Detection rates at low sequence identity demonstrate the advantage of function-aware screening.}
+\label{tab:main_results}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ & AUROC & Avg Precision & Recall@5%FPR & F1@5%FPR & Recall@1%FPR & Det. Rate <40% ID & Det. Rate 40-70% ID \\
+Method &  &  &  &  &  &  &  \\
+\midrule
+\textbf{3-mer Similarity} & 0.723 & 0.985 & 0.511 & 0.675 & 0.429 & 0.530 & 0.463 \\
+\textbf{ESM-2 Pretrained Similarity} & 0.978 & 0.999 & 0.904 & 0.948 & 0.665 & 0.912 & 0.857 \\
+\textbf{Functional Embedding Similarity} & 0.975 & 0.999 & 0.867 & 0.927 & 0.501 & 0.855 & 0.909 \\
+\textbf{Threat Classifier} & 0.958 & 0.996 & 0.762 & 0.864 & 0.216 & 0.726 & 0.885 \\
+\bottomrule
+\end{tabular}
+\end{table}

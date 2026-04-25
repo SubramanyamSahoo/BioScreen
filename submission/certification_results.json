@@ -1,0 +1,37 @@
+{
+  "0.1": {
+    "threat_certified_rate": 1.0,
+    "adv_certified_rate": 1.0,
+    "benign_certified_rate": 0.7,
+    "mean_threat_radius": 0.22051862345554862,
+    "mean_adv_radius": 0.22051862345554857
+  },
+  "0.25": {
+    "threat_certified_rate": 1.0,
+    "adv_certified_rate": 1.0,
+    "benign_certified_rate": 0.7,
+    "mean_threat_radius": 0.5512965586388713,
+    "mean_adv_radius": 0.5480969565618775
+  },
+  "0.5": {
+    "threat_certified_rate": 1.0,
+    "adv_certified_rate": 1.0,
+    "benign_certified_rate": 0.7,
+    "mean_threat_radius": 1.0974064571197624,
+    "mean_adv_radius": 1.0920635124716116
+  },
+  "0.75": {
+    "threat_certified_rate": 1.0,
+    "adv_certified_rate": 1.0,
+    "benign_certified_rate": 0.7,
+    "mean_threat_radius": 1.640953029340931,
+    "mean_adv_radius": 1.636318134200208
+  },
+  "1.0": {
+    "threat_certified_rate": 1.0,
+    "adv_certified_rate": 1.0,
+    "benign_certified_rate": 0.6666666666666666,
+    "mean_threat_radius": 2.163136636426631,
+    "mean_adv_radius": 2.178315355038133
+  }
+}

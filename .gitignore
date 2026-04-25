@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.so
+
+# Model weights — 11+ GB, use HuggingFace Hub
+*.pt
+*.bin
+*.safetensors
+bioscreen-v1/model_weights.pt
+best_model.pt
+best_production_model.pt
+submission/model_weights.pt
+
+# Data (allow specific submission CSVs)
+*.csv
+!submission/main_results.csv
+!submission/ablation_results.csv
+!submission/runtime_benchmark.csv
+!submission/production_results.csv
+!submission/mechanism_results.csv
+
+# Notebooks (don't push notebooks with tokens!)
+*.ipynb
+.ipynb_checkpoints/
+
+# Environment
+.env
+.env.*
+venv/
+.venv/
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Experiment tracking
+wandb/
+runs/
